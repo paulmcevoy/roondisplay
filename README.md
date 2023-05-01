@@ -3,6 +3,8 @@ Display using Raspberry Pi with Roon API
 
 Fetches the playing track and artist via the Roon API on the local network.
 
+## Software:
+[Roon](https://roonlabs.com/)
 
 ## Parts:
 Raspberry Pi Zero
