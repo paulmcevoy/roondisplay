@@ -1,5 +1,5 @@
 # roondisplay
-Display using Raspberry Pi with Roon API
+OLED Display using Raspberry Pi with Roon API
 
 Fetches the playing track and artist via the Roon API on the local network.
 
@@ -15,9 +15,8 @@ Raspberry Pi Zero
 
 [LOXJIE A30 HiRes Amp with Bluetooth](https://www.amazon.co.uk/LOXJIE-MA12070-Headphone-Amplifier-Bluetooth/dp/B08J7Z8TN6)
 
+[Awow Mini PC](https://awowtech.com/products/awow-mini-pc-ny41) running Ubuntu 20.04
 
-## Not shown:
-[Awow Mini PC](https://awowtech.com/products/awow-mini-pc-ny41)  running Ubuntu 20.04
-
+[FOSI Audio sub](https://www.amazon.co.uk/gp/product/B07K7NJ4QN/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1)
 
 ![Display](https://github.com/paulmcevoy/roondisplay/blob/main/roondisplay.jpg)
