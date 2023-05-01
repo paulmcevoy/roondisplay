@@ -11,6 +11,9 @@ Fetches the playing track and artist via the Roon API on the local network.
 - [SSD1309 OLED Display](https://www.aliexpress.com/item/1005003097088323.html)
 
 ## Also shown:
+
+- [DALI Spektor 1 Bookshelf Speakers](https://www.dali-speakers.com/en/products/spektor/spektor-1)
+
 - [Topping D10s DAC](https://www.amazon.co.uk/TOPPING-ES9038Q2M-DSD256-Desktop-Decoder-Silver/dp/B08CTZWX97)
 
 - [LOXJIE A30 HiRes Amp with Bluetooth](https://www.amazon.co.uk/LOXJIE-MA12070-Headphone-Amplifier-Bluetooth/dp/B08J7Z8TN6)
