@@ -1,3 +1,4 @@
+import os
 import requests
 from luma.core.interface.serial import i2c, spi, pcf8574
 from luma.core.interface.parallel import bitbang_6800
@@ -15,41 +16,60 @@ serial = i2c(port=1, address=0x3C)
 
 # substitute ssd1331(...) or sh1106(...) below if using that device
 device = ssd1309(serial)
+width = 128
+height = 64
 
 from roonapi import RoonApi
 
 appinfo = {
-    "extension_id": "python_roon_test",
+    "extension_id": "python_roon_display",
     "display_name": "Python library for Roon",
     "display_version": "1.0.0",
     "publisher": "gregd",
     "email": "mygreat@emailaddress.com",
 }
 
-# Can be None if you don't yet have a token
-#token=None
-token = open("/home/pi/mytokenfile").read()
+try:
+    core_id = open("/home/pi/roondisplay/my_core_id_file").read()
+    token = open("/home/pi/roondisplay/my_token_file").read()
+except OSError:
+    print("Please authorise first using discovery.py")
+    exit()
 
-server = "192.168.0.86"
-width = 128
-height = 64
-print("Getting Roonapi connection")
-roonapi = RoonApi(appinfo, token, server, 9330)
-print("Got Roonapi connection")
+hostname = "192.168.0.86"
+
+def check_ping():
+    response = os.system("ping -c 1 " + hostname)
+    # and then check the response...
+    if response == 0:
+        pingstatus = True
+    else:
+        pingstatus = False
+
+    return pingstatus
+
+while not check_ping():
+    time.sleep(2)
+    print(f'Waiting for ping response from {hostname}')
+
+
+
+while True:
+    try:
+        discover = RoonDiscovery(core_id)
+        server = discover.first()
+        print(discover, server)
+        discover.stop()
+        print(f'token: {token} server0 {server[0]} server1 {server[1]}')
+        roonapi = RoonApi(appinfo, token, server[0], server[1], True)
+        break
+    except:
+        print("Roon Core not up")
+        time.sleep(2)
+        pass
+
 font = ImageFont.truetype("Quicksand-Regular.ttf", 12)
 
-
-def wait_for_connection():
-    timeout = 5
-    while True:
-        try:
-            request = requests.get('http://google.com', timeout=timeout)
-            print("Connected to the Internet")
-            return
-        except (requests.ConnectionError, requests.Timeout) as exception:
-            print("No internet connection.")
-            time.sleep(3)
-            pass
 
 def get_horz(val,draw):
     w,h = draw.textsize(val,font=font)
@@ -77,26 +97,33 @@ def draw_text(track,artist,album):
         print_stuff(draw,artist,32)
         time.sleep(1)
 
+print("Got token, starting callback")
+
 def my_state_callback(event, changed_ids):
     """Call when something changes in roon."""
     print("my_state_callback event:%s changed_ids: %s" % (event, changed_ids))
     for zone_id in changed_ids:
-        zone = roonapi.zones[zone_id]
-        track = zone['now_playing']['three_line']['line1']
-        artist = zone['now_playing']['three_line']['line2']
-        album = zone['now_playing']['three_line']['line3']
-        draw_text(track,artist,album)
+        try:
+            zone = roonapi.zones[zone_id]
+            if zone['display_name'] == 'D10s':
+                if 'now_playing' in zone.keys():
+                    track = zone['now_playing']['three_line']['line1']
+                    artist = zone['now_playing']['three_line']['line2']
+                    album = zone['now_playing']['three_line']['line3']
+                    draw_text(track,artist,album)
+                else:
+                    draw_text('It\'s full', 'of stars...',' ')
 
-wait_for_connection()
+            time.sleep(1)
+        except Exception as e:
+            print(f'Exception Will Robinson {e}')
+#wait_for_connection()
+draw_text('My god, it\'s full', 'of stars...',' ')
 roonapi.register_state_callback(my_state_callback)
 
 while True:
     time.sleep(1)
 
-# save the token for next time
-with open("/home/pi/mytokenfile", "w") as f:
-    f.write(roonapi.token)
 
-
-time.sleep(10)
+time.sleep(2)
 
